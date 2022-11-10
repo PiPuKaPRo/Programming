@@ -1,10 +1,10 @@
 package com.company;
 
 public enum Masti {
-    HEARTS("H"),
-    DIAMONDS("D"),
-    CLUBS("C"),
-    SPADES("S");
+    HEARTS("♥"),
+    DIAMONDS("♦"),
+    CLUBS("♣"),
+    SPADES("♠");
 
     private final String mast;
 
@@ -14,7 +14,7 @@ public enum Masti {
 
     @Override
     public String toString() {
-        return mast;
+        return "" + mast;
     }
 }
 

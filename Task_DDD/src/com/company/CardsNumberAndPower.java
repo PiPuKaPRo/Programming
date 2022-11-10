@@ -2,7 +2,7 @@ package com.company;
 
 public enum CardsNumberAndPower {
         ACE(14, "A"),
-        KING(13, "13"),
+        KING(13, "K"),
         QUEEN(12, "Q"),
         JACK(11, "J"),
         TEN(10, "10"),
@@ -21,10 +21,7 @@ public enum CardsNumberAndPower {
 
     @Override
     public String toString() {
-        return "CardsNumberAndPower{" +
-                "pow=" + pow +
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 
     public int getPow() {
