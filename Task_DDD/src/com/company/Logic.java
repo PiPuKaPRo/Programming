@@ -260,88 +260,103 @@ public class Logic {
         return nextPlayer;
     }
 
-    /***/
-
-    public Player playingRound(Table g, Round round, boolean isFirstRound) { // играем раунд
+    public Player playingRound(Table t, Round round, boolean isFirstRound) { // играем раунд
         Player source = round.getSource();
         Player target = round.getTarget();
         List<Battle> battles = new ArrayList<>();
-        Player nextPlayer = null;
+        Player nextPlayer;
         int maxCountBattles = isFirstRound ? 5 : 6;
 
         int battleNumber = 0;
-        System.out.println("-*-*-| " + (battleNumber) + " fight |-*-*-");
-        // первый ход в раунде
-        Card down = attackersTurn(g, round, source, battleNumber); // карта которой атакуют
-        System.out.println(down.toString());
-        Card up = defendersMove(g, target, round, down); // карта защищающ
-        System.out.println(up.toString());
-        if (up == null) {
+        // первый баттл в раунде
+        Battle battle = null;
+        System.out.println("-*-*-| " + (battleNumber + 1) + " fight |-*-*-");
 
-        }
-        while (battles.size() <= maxCountBattles && up != null) { // пока кол-во батлов не достиг макс и если атакер не сказал бито
-            System.out.println("-*-*-| " + (battleNumber + 1) + " fight |-*-*-");
-            down = attackersTurn(g, round, source, battleNumber);
-            System.out.println(down.toString());
-            if (down != null) { // если игрок сходил(не сказал бито)
-                up = defendersMove(g, target, round, down); // тогда необходимо биться
-                System.out.println(up.toString());
-            } else { // сказал бито
-                System.out.println("-*-*-*-*-*-*-*-*-*-\n" + source.toString() + " strayed");
+        // карта которую надо побить
+        Card down = attackersMove(true, round, source);
+        // карта, которой бьют
+        Card up;
+        while (battles.size() <= maxCountBattles) { // пока кол-во батлов не достиг макс и если атака не сказала бито
+            System.out.println("-*-*-| " + (battleNumber + 1) + " battle |-*-*-");
+
+            // если атака сказала бито
+            if (down == null) break;
+            System.out.println(down);
+
+            // иначе защита делает ход
+            up = defendersMove(t, target, round, down);
+            // если защита сказала беру
+            if (up == null) {
+                // сохраняем батл и заканчиваем раунд (break)
+                battle = new Battle(down, up);
+                battles.add(battle);
+                round.setFights(battles);
                 break;
             }
-            battleNumber++;
-        }
-        // сохраняем батл
-        Battle battle = new Battle(down, up);
-        battles.add(battle);
-        round.setFights(battles);
+            System.out.println(up);
 
-        // если защитник не побил
-        if (!battle.isCovered()) {
-            // то защитн берет
-            System.out.println(target.toString() + " takes");
-            // отмечаем это в раунде
-            round.setPickedUp(false);
-            // получаем все карты раунда
-            List<Card> cardsInRound = getCardsInRound(round);
-            for (Card card : cardsInRound) {
-                addCard(g, target, card);
-            }
-            if (isGameActive(g)) {
-                nextPlayer = getNextPlayingPlayer(g, target);
-            } else {
-                System.out.println(Console.playerCardsToString(g));
-                return null;
-                //игрок target проиграл
-            }
+            // если никто не говорил ни "бито", ни "беру"
+            // сохраняем раунд и продолжаем раунд
+            battle = new Battle(down, up);
+            battles.add(battle);
+            round.setFights(battles);
 
-
-        } else {
-            System.out.println(up.toString());
-
-            round.setPickedUp(true);
-            if (isPlayerActive(g, target)) {
-                nextPlayer = target;
-            } else {
-                nextPlayer = getNextPlayingPlayer(g, target);
-            }
+            // атака делает новый ход
+            down = attackersMove(false, round, source);
         }
 
+        nextPlayer = getNextPlayer(t, round, battle);
 
-        /***/   //игрок добирает карты до 6 (если ему это необходимо)
-        if (source.getPlayersCards().size() < 6) {
-            addCardToFull(g, source);
-        }
-        if (target.getPlayersCards().size() < 6) {
-            addCardToFull(g, target);
-        }
-        /***/
-        g.addRound(round);  //сохраняем раунд
+        t.addRound(round);  //сохраняем раунд
 
-        System.out.println(Console.playerCardsToString(g));
-        System.out.println(g.getCards().size());
+        // выводим карты игроков и размер колоды
+        System.out.println(Console.playerCardsToString(t));
+        System.out.println(t.getCards().size());
+
+        // возвращаем следующего игрока
         return nextPlayer;
+    }
+
+    private Player getNextPlayer(Table t, Round r, Battle b) {
+        // проверяем последний батл
+        // если защита не побила
+        if (!b.isCovered()) {
+            // то защита берет
+            System.out.println(r.getTarget().toString() + " takes");
+            // отмечаем это в раунде
+            r.setPickedUp(false);
+            // получаем все карты раунда
+            List<Card> cardsInRound = getCardsInRound(r);
+            // защита получает все карты раунда к себе в колоду
+            for (Card card : cardsInRound) {
+                addCard(t, r.getTarget(), card);
+            }
+
+            // атака добирает карты до 6
+            addCardToFull(t, r.getSource());
+
+            if (isGameActive(t)) return getNextPlayingPlayer(t, r.getTarget());
+
+            System.out.println(Console.playerCardsToString(t));
+            return null;
+            //игрок target проиграл
+        } else {
+            // защита отбилась
+            System.out.println(b.up().toString());
+            // отмечаем это в раунде
+            r.setPickedUp(true);
+
+            // оба игрока добирают карты до 6
+            addCardToFull(t,  r.getSource());
+            addCardToFull(t, r.getTarget());
+
+            if (isPlayerActive(t, r.getTarget())) {
+                // если защита имеет карты, то она - следующая атака
+                return r.getTarget();
+            } else {
+                // иначе ищем следующего игрока
+                return getNextPlayingPlayer(t, r.getTarget());}
+        }
     }
 
     private List<Card> getCardsInRound(Round round) { // все карты за раунд
@@ -356,13 +371,15 @@ public class Logic {
     }
 
     /***/
-    private void addCardToFull(Table g, Player player) { //добор карт игроком после раунда
+    private void addCardToFull(Table t, Player player) { //добор карт игроком после раунда
+        if (player.getPlayersCards().size() > 6) return;
+
         List<Card> cards = player.getPlayersCards();
-        Stack<Card> deck = g.getCards();
+        Stack<Card> deck = t.getCards();
         int n = 6 - cards.size(); // сколько карт не хватает
         for (int i = 0; i < n; i++) {
             if (deck.size() != 0) {
-                addCard(g, cards, deck.pop());
+                addCard(t, cards, deck.pop());
             } else {
                 break;
             }
@@ -370,14 +387,14 @@ public class Logic {
         player.setPlayersCards(cards);
     }
 
-    public void addCard(Table g, Player player, Card card) {  //добавление карты игроку
+    public void addCard(Table t, Player player, Card card) {  //добавление карты игроку
         List<Card> cards = player.getPlayersCards();
-        addCard(g, cards, card);
+        addCard(t, cards, card);
         player.setPlayersCards(cards);
     }
 
-    public void addCard(Table g, List<Card> cards, Card card) {
-        Masti trump = g.getTrumpCard().getSuit();
+    private void addCard(Table t, List<Card> cards, Card card) {
+        Masti trump = t.getTrumpCard().getSuit();
 
         int i = 0;
         if (card.getSuit() != trump) {
@@ -401,108 +418,109 @@ public class Logic {
         cards.add(i, card);
     }
 
-    public Card attackersTurn(Table g, Round round, Player player, int battleNumber) {
-        System.out.println(Console.getPlayerCardsForBattle(g, player));// ход атакующего (возвращает карту, которую надо будет побить)
-        List<Card> cards = player.getPlayersCards();
-        Card card = null;
-        if (battleNumber != 0) {
-            // попросить заменить на карту которую введут
-            while (true) {//пока не появится карта, которая есть в раунде (которой можно ходить)
-                int numberCard = Console.input();
-                if (numberCard == -1) {
-                    card = null;
-                    break;
-                }
-                card = cards.get(numberCard);
+    private Card attackersMove(boolean isFirstBattle, Round round, Player source){
+        StringBuilder sb = new StringBuilder();
 
-                if (!round.nominalInRound(card.getRank())) { // если можно сходить данной картой, цикл стоп
-                    cards.remove(numberCard);
-                    break;
-                }
+        List<Card> cards = source.getPlayersCards();
+        // если 1ый ход в раунде - то нельзя сказать бито
+        if (!isFirstBattle) sb.append("-1 - bito");
 
+        // выводим варианты хода
+        for (int i = 0; i < cards.size(); i++) {
+            Card c = cards.get(i);
+            sb.append(i + " - " + c.toString());
+        }
+
+        if (isFirstBattle) {
+            System.out.println("Choose card or say bito: ");
+        } else {
+            System.out.println("Choose card:");
+        }
+
+        // ждем правильный ход
+        while(true) {
+            int action = Console.input();
+            if (!isFirstBattle && action == -1) {
+                System.out.println("You cannot say bito. Choose card: ");
+            } else if (round.nominalInRound(cards.get(action).getRank())) {
+                System.out.println("You cannot move this card. Choose another card:");
+            } else {
+                return cards.get(action);
             }
         }
-
-        if (card == null) { //если card == null, то значит игрок не может сходить и автоматически бито
-            round.setPickedUp(true);
-        } else {
-            round.addRank(card.getRank());
-        }
-        return card;
     }
 
-    public Card defendersMove(Table g, Player player, Round round, Card down) {
+    public Card defendersMove(Table t, Player player, Round round, Card down) {
         //ход защищающегося (возвращает карту, которой будем бить карту down)
-        //ищем самую маленькую карту, которой можем побить карту down
-        System.out.println(Console.getPlayerCardsForBattle(g, player));
+        System.out.println(Console.getPlayerCardsForBattle(t, player));
         List<Card> cards = player.getPlayersCards();
-        int numberCard = Console.input();
+        int numberCard;
         Card cardForMove = null;
 
-        boolean isTrump = (down.getSuit() == g.getTrumpCard().getSuit());       //карта, которую нужно побить
-        //является козырем
 
-        if (cards.get(numberCard).compareTo(down) > 0) { //>0, значит карта card больше по номиналу чем карта down
-            if (cards.get(numberCard).getSuit() == down.getSuit()) {
-                cardForMove = cards.get(numberCard);
+        // ждём правильного хода
+        while (true) {
+            numberCard = Console.input();
 
+            // если выбрали сдаться - ожидание закончено
+            if (numberCard == -1) break;
+
+            // если выбранная карта больше по номиналу и той же масти
+            if (cards.get(numberCard).compareTo(down) > 0) {
+                if (cards.get(numberCard).getSuit() == down.getSuit()) {
+                    // значит карта подходит, ожидание закончено
+                    cardForMove = cards.get(numberCard);
+                    break;
+                }
+            }
+
+            //может побить и козырной картой
+            //если карта, которую нужно побить НЕ ЯВЛЯЕТСЯ козырем, а выбранная карта ЯВЛЯЕТСЯ
+            if (down.getSuit() != t.getTrumpCard().getSuit()) {
+                if (cards.get(numberCard).getSuit() == t.getTrumpCard().getSuit()) {
+                    // значит карта подходит, ожидание закончено
+                    cardForMove = cards.get(numberCard);
+                    break;
+                }
             }
         }
 
-        //может побить и козырной картой
-        /***/
-        if (!isTrump) {                                     //если карта, которую нужно побить не является козырем
-            if (cards.get(numberCard).getSuit() == g.getTrumpCard().getSuit()) { //то мы можем побить её любой козырной картой
-                cardForMove = cards.get(numberCard);                         //(самой маленькой)
-            }
-        }
-        /***/
-
-
+        // если не берёт, то удаляем карту из рук и добавляем её номинал в раунд
         if (cardForMove != null) {
             round.addRank(cardForMove.getRank());
             cards.remove(numberCard);
         }
+
         return cardForMove;
     }
 
 
-    private boolean isGameActive(Table g) { // игра еще продолжается?
+    private boolean isGameActive(Table t) { // игра еще продолжается?
         int count = 0; // кол-во игроков
-        for (Player p : g.getPlayers()) {
-            if (!isPlayerActive(g, p)) {
+        for (Player p : t.getPlayers()) {
+            if (!isPlayerActive(t, p)) {
                 count++;
+
+                if (count > 1) return true;
             }
         }
-        if (count <= 1) {
-            return true;
-        }
         return false;
     }
 
-    private boolean isPlayerActive(Table g, Player p) {  // игрок еще в игре?
-        if (!p.getPlayersCards().isEmpty() || !isDeckEmpty(g)) {
-            return true;
-        }
-        return false;
+    private boolean isPlayerActive(Table t, Player p) {  // игрок еще в игре?
+        return !p.getPlayersCards().isEmpty() || !isDeckEmpty(t);
     }
 
-    private boolean isDeckEmpty(Table g) {
-        if (g.getCards().isEmpty()) {
-            return true;
-        }
-        return false;
+    private boolean isDeckEmpty(Table t) {
+        return t.getCards().isEmpty();
     }
 
-    private Player getLastPlayer(Table g) {
-        Player lastPlayer = null;
-        for (int i = 0; i < g.getPlayers().size(); i++) {
-            lastPlayer = g.getPlayers().get(i);
-            if (isPlayerActive(g, lastPlayer)) {
-                break;
-            }
+    private Player getLastPlayer(Table t) {
+        for (int i = 0; i < t.getPlayers().size(); i++) {
+            Player lastPlayer = t.getPlayers().get(i);
+            if (isPlayerActive(t, lastPlayer)) return lastPlayer;
         }
-        return lastPlayer;
+        return null;
     }
 }
  // https://miro.com/app/board/uXjVPEkbv-Q=/

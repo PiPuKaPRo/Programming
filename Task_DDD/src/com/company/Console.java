@@ -5,15 +5,9 @@ import java.util.Scanner;
 
 public class Console {
 
-    private int cardNumberInHand;
-    private static Scanner s = new Scanner(System.in);
-
-    public Console() {
-        this.cardNumberInHand = input();
-    }
-
     public static int input() {
-        return s.nextInt();
+        Scanner scn = new Scanner(System.in);
+        return scn.nextInt();
     }
 
     public static String playerCardsToString(Table g) {
