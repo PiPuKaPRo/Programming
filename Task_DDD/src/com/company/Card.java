@@ -1,12 +1,12 @@
 package com.company;
 
-public record Card(Masti suit, CardsNumberAndPower rank) implements Comparable<Card> {
+public record Card(Mast suit, CardsNumberAndPower rank) implements Comparable<Card> {
 
     public CardsNumberAndPower getRank() {
         return rank;
     }
 
-    public Masti getSuit() {
+    public Mast getSuit() {
         return suit;
     }
 
@@ -17,6 +17,6 @@ public record Card(Masti suit, CardsNumberAndPower rank) implements Comparable<C
 
     @Override
     public int compareTo(Card second) {
-        return this.getRank().getPow() - second.getRank().getPow();
+        return this.getRank().getPower() - second.getRank().getPower();
     }
 }

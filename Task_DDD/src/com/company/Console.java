@@ -10,10 +10,10 @@ public class Console {
         return scn.nextInt();
     }
 
-    public static String playerCardsToString(Table g) {
+    public static String playerCardsToString(Table t) {
         StringBuilder playerCards = new StringBuilder("\n");
-        for (int i = 0; i < g.getPlayers().size(); i++) {
-            playerCards.append(getPlayerCardsForBattle(g, g.getPlayers().get(i)));
+        for (int i = 0; i < t.getPlayers().size(); i++) {
+            playerCards.append(getPlayerCardsForBattle(t, t.getPlayers().get(i)));
         }
         return playerCards.toString();
     }
@@ -21,7 +21,7 @@ public class Console {
     public static String getPlayerCardsForBattle(Table t, Player player) {
         List<Card> cards = player.getPlayersCards();
         StringBuilder playerCards = new StringBuilder("\n");
-        Masti trump = t.getTrumpCard().getSuit();
+        Mast trump = t.getTrumpCard().getSuit();
         if (cards.size() == 0) {
             playerCards.append("none");
         } else {
@@ -45,4 +45,6 @@ public class Console {
         }
         return playerCards.toString();
     }
+
+
 }

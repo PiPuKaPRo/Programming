@@ -11,11 +11,11 @@ public enum CardsNumberAndPower {
         SEVEN(7, "7"),
         SIX(6,"6");
 
-         private final int pow;
+         private final int power;
          private final String name;
 
     CardsNumberAndPower(int pow, String name) {
-        this.pow = pow;
+        this.power = pow;
         this.name = name;
     }
 
@@ -24,11 +24,7 @@ public enum CardsNumberAndPower {
         return name;
     }
 
-    public int getPow() {
-        return pow;
-    }
-
-    public String getName() {
-        return name;
+    public int getPower() {
+        return power;
     }
 }

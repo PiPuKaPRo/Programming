@@ -1,15 +1,15 @@
 package com.company;
 
-public record Battle(Card down, Card up) {
-    public Card getDown() {
-        return down;
+public record Battle(Card attackCard, Card defendCard) {
+    public Card getAttackCard() {
+        return attackCard;
     }
 
-    public Card getUp() {
-        return up;
+    public Card getDefendCard() {
+        return defendCard;
     }
 
     public boolean isCovered() { // если карта отбита
-        return up != null;
+        return defendCard != null;
     }
 }

@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Round {
-    private Player source; // кто ходит
-    private Player target; // кто отбивается
-    private List<Battle> fights = new ArrayList(); // борьба
-    private boolean isPickedUp = false;  // бито или стянул
-    private List<CardsNumberAndPower> allRanksInRound = new ArrayList<>(); //номиналы всех карт, используемых в раунде
+    private Player source;
+    private Player target;
+    private List<Battle> battles = new ArrayList();
+    private boolean isPickedUp = false;
+    private List<CardsNumberAndPower> allRanksInRound = new ArrayList<>();
 
     public Round(Player source, Player target) {
         this.source = source;
@@ -24,13 +24,13 @@ public class Round {
     }
 
 
-    public List<Battle> getFights() {
-        return fights;
+    public List<Battle> getBattles() {
+        return battles;
     }
 
     // добавляем все бои за 1 раунд
-    public void setFights(List<Battle> fights) {
-        this.fights = fights;
+    public void setBattles(List<Battle> battles) {
+        this.battles = battles;
     }
 
     public void setPickedUp(boolean pickedUp) {
@@ -45,9 +45,7 @@ public class Round {
 
     public boolean nominalInRound(CardsNumberAndPower rank) {  //проверяем наличие номинала rank в раунде
         for (CardsNumberAndPower r: allRanksInRound) {         //цикл по всем сохранённым номиналам
-            if (r.equals(rank)) {               //если rank совпадает с r, то такой номинал есть
-                return true;                    //иначе такого номинала нет
-            }
+            if (r.equals(rank)) return true;             //если rank совпадает с r, то такой номинал есть
         }
         return false;
     }

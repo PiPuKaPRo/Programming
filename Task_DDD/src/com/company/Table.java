@@ -9,11 +9,7 @@ public class Table {
     private Card trumpCard;
     private List<Player> players;
     private Stack<Card> cards;
-
     private List<Round> rounds;
-
-    //
-
 
     public Stack<Card> getCards() {
         return cards;
@@ -41,9 +37,10 @@ public class Table {
     }
 
     public void addRound(Round round) {
-        if (rounds == null) {
-            rounds = new ArrayList();
-        }
         rounds.add(round);
+    }
+
+    public Table() {
+        rounds = new ArrayList<>();
     }
 }
