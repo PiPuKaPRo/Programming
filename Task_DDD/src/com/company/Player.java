@@ -4,9 +4,9 @@ import java.util.*;
 
 public class Player {
     private List<Card> playersCards;
-    private String number;
+    private int number;
 
-    public Player(String number) {
+    public Player(int number) {
         this.number = number;
     }
 
@@ -26,7 +26,7 @@ public class Player {
         this.playersCards = playersCards;
     }
 
-    public String getNumber() {
+    public int getNumber() {
         return number;
     }
 

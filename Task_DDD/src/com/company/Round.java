@@ -61,7 +61,7 @@ public class Round {
         return cardsInRound;
     }
 
-    public static Player playingRound(Table t, Round round, boolean isFirstRound) { // играем раунд
+    public static Player playingRound(Table t, Round round, boolean isFirstRound, Game g) { // играем раунд
         Player source = round.getSource();
         Player target = round.getTarget();
         List<Battle> battles = new ArrayList<>();
@@ -75,7 +75,7 @@ public class Round {
 
         // карта которую надо побить
 
-        Card down = Logic.attackersMove(true, round, source, t);
+        Card down = Logic.attackersMove(true, round, source, t, g);
         // карта, которой бьют
         Card up;
         while (battles.size() <= maxCountBattles) { // пока кол-во батлов не достиг макс и если атака не сказала бито
@@ -90,7 +90,7 @@ public class Round {
             System.out.println(down);
 
             // иначе защита делает ход
-            up = Logic.defendersMove(t, target, round, down);
+            up = Logic.defendersMove(t, target, round, down,g);
             // если защита сказала беру
             if (up == null) {
                 // сохраняем батл и заканчиваем раунд (break)
@@ -110,7 +110,7 @@ public class Round {
             // начинается новый батл
             System.out.println("-*-*-| " + (battleNumber + 1) + " battle |-*-*-");
             // атака делает новый ход
-            down = Logic.attackersMove(false, round, source, t);
+            down = Logic.attackersMove(false, round, source, t, g);
         }
 
         nextPlayer = Table.getNextPlayer(t, round, battle);

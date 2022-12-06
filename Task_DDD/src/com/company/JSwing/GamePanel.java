@@ -81,10 +81,11 @@ public class GamePanel {
             Table t = new Table();
             Logic logic = new Logic();
             Game g = new Game();
+            g.setWindow(true);
             Deck dk = new Deck();
             dk.addCardsInGame(t);
             g.addPlayersInGame(t, players);
-            logic.play(t);
+            logic.play(t,g);
         });
         return panel;
     }
