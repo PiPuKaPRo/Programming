@@ -91,9 +91,6 @@ public class GamePanel {
 
     private Box createRightPanel(){
         Box box = Box.createHorizontalBox();
-
-
-
         return  box;
     }
 }

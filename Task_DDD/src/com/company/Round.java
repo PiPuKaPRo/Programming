@@ -59,7 +59,7 @@ public class Round {
             }
         }
         return cardsInRound;
-    } // в класс тейбл
+    }
 
     public static Player playingRound(Table t, Round round, boolean isFirstRound) { // играем раунд
         Player source = round.getSource();

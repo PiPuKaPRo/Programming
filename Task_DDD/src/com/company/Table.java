@@ -76,7 +76,7 @@ public class Table {
             if (isActive(t, lastPlayer)) return lastPlayer;
         }
         return null;
-    } // в класс плеер
+    }
 
     public static Player getNextPlayer(Table t, Round r, Battle b) {
         if (!b.isCovered()) {

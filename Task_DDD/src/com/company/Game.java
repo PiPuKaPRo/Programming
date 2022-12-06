@@ -10,7 +10,7 @@ public class Game {
             players.add(new Player(Integer.toString(i)));
         }
         g.setPlayers(players);
-    } // в класс тейбл
+    }
 
     public static Player getPlayerWhoMovedFirst(Table t) { // кто ходит первым
         Card currentTrump = t.getTrumpCard(); // текущий козырь
@@ -28,7 +28,7 @@ public class Game {
             System.out.println("The players have no trumps in their hands, the highest card is" + playerWhoMovedFirst);
         }
         return playerWhoMovedFirst;
-    } // в класс тейбл
+    }
 
     private static Player searchMaxTrumpInGame(Table t, Mast currentTrump) {
         Player playerWithMaxTrump = null;  // номер игрока с самым большим козырем
@@ -68,7 +68,7 @@ public class Game {
 
         //если ни у кого нет козыря
         return playerWithMaxTrump;
-    } // в класс тейбл
+    }
 
     private static Player searchMinTrumpInGame(Table t, Mast currentTrump) { // search - поиск
         Player playerWithMinTrump = null;   // игрок с самым маленьким козырем
@@ -98,7 +98,7 @@ public class Game {
             }
         }
         return playerWithMinTrump;
-    } // в класс тейбл
+    }
 
     private static Player searchMaxCardInGame(Table t) {
         List<Player> players = t.getPlayers();
@@ -115,7 +115,7 @@ public class Game {
             }
         }
         return playerWithMaxCard;
-    } // в класс тейбл
+    }
 
     public static boolean isGameActive(Table t) {
         int count = 0;

@@ -42,7 +42,7 @@ public class Deck {
             }
         }
         player.setPlayersCards(cards);
-    }  // в класс плеер
+    }
 
     public static void addCardToPlayer(Table t, Player player, Card card) {  //добавление карты игроку
         List<Card> cards = player.getPlayersCards();
@@ -73,5 +73,5 @@ public class Deck {
             }
         }
         cards.add(i, card);
-    } // в класс плеер
+    }
 }
