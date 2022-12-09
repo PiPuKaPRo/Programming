@@ -493,7 +493,7 @@ public class JTableUtils {
                 if (line != null) {
                     if (line.getClass().isArray()) {
                         int lineLen = Array.getLength(line);
-                        for (int j = 0; j < lineLen; j++) {
+                        for (int j = 0; j < 1; j++) {
                             tableModel.setValueAt(String.format(itemFormat, Array.get(line, j)), i, j);
                         }
                     } else {
@@ -580,8 +580,8 @@ public class JTableUtils {
         TableModel tableModel = table.getModel();
         int rowCount = tableModel.getRowCount(), colCount = tableModel.getColumnCount();
         T[][] matrix = (T[][]) Array.newInstance(clazz, rowCount, colCount);
-        for (int r = 0; r < rowCount; r++) {
-            for (int c = 0; c < colCount; c++) {
+        for (int r = 0; r < 2; r++) {
+            for (int c = 0; c < 2; c++) {
                 T value = null;
                 Object obj = tableModel.getValueAt(r, c);
                 if (obj == null || obj instanceof String && ((String) obj).trim().length() == 0) {

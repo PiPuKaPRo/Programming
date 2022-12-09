@@ -1,19 +1,24 @@
 package com.company.JSwing;
 
-import com.company.Deck;
-import com.company.Game;
-import com.company.Logic;
-import com.company.Table;
+import com.company.*;
+import com.company.utils.JTableUtils;
+import com.company.utils.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class GamePanel {
     private JFrame frame;
     private Container mainContainer;
     private GamePanel graphicPanel;
-
+    private JTable tableOfPlayers;
+    private Table t;
+    private Logic logic;
+    private Game g;
+    private JLabel l1;
+    private JLabel l2;
+    private JTable sours;
+    private JTable target;
     private int players;
 
 
@@ -36,19 +41,19 @@ public class GamePanel {
         mainContainer = frame.getContentPane();
         mainContainer.setLayout(new BorderLayout());
 
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.setBackground(Color.lightGray);
-        mainContainer.add(bottomPanel, BorderLayout.SOUTH);
-
-
         Box leftPanel = createLeftPanel();
         mainContainer.add(leftPanel, BorderLayout.WEST);
-        Box rightPanel = createRightPanel();
-        mainContainer.add(rightPanel, BorderLayout.CENTER);
+        createStartMenu();
     }
 
+    private void createStartMenu(){
+        Box rightPanel = createRightPanel();
+        mainContainer.add(rightPanel, BorderLayout.EAST);
+    }
     private Box createLeftPanel() {
         Box panel = Box.createVerticalBox();
+
+        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
 
         JLabel title = new JLabel("<html>Дурак ♠ ♥ ♣ ♦</html>");
         title.setFont(new Font(null, Font.BOLD, 36));
@@ -59,8 +64,6 @@ public class GamePanel {
         JLabel title1 = new JLabel("<html>Выберите количество игроков: </html>");
         title1.setFont(new Font(null, Font.BOLD, 16));
         panel.add(title1);
-
-        panel.setBackground(Color.gray);
 
         JRadioButton b2 = new JRadioButton("2 Players");
         players = 2;
@@ -77,21 +80,49 @@ public class GamePanel {
         JButton start = new JButton("Play");
         panel.add(start);
 
+        panel.add(Box.createRigidArea(new Dimension(5, 7)));
+
+        JButton startGame = new JButton("Start game");
+        panel.add(startGame);
+
         start.addActionListener(e -> {
-            Table t = new Table();
-            Logic logic = new Logic();
-            Game g = new Game();
+            t = new Table();
+            logic = new Logic();
+            g = new Game();
             g.setWindow(true);
             Deck dk = new Deck();
             dk.addCardsInGame(t);
             g.addPlayersInGame(t, players);
+            l1 = new JLabel(String.valueOf(Table.getTrumpCard()));
+            l1.setFont(new Font(null, Font.BOLD, 20));
+            l2 = new JLabel(Table.getPlayersSize());
+            l2.setFont(new Font(null, Font.BOLD, 20));
+            String[][] matrix = Table.getStringPlayers(Table.getPlayers());
+            JTableUtils.writeArrayToJTable(tableOfPlayers, matrix);
+        });
+
+        startGame.addActionListener(e -> {
             logic.play(t,g);
         });
+
         return panel;
     }
 
     private Box createRightPanel(){
         Box box = Box.createHorizontalBox();
+        box.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
+        l1 = new JLabel(" ");
+        box.add(l1);
+
+        box.add(Box.createRigidArea(new Dimension(5, 15)));
+
+        l2 = new JLabel(" ");
+        box.add(l2);
+
+        box.add(Box.createRigidArea(new Dimension(5, 15)));
+
+        tableOfPlayers = new JTable();
+        box.add(tableOfPlayers);
         return  box;
     }
 }

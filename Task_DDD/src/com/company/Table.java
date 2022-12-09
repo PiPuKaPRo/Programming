@@ -6,7 +6,7 @@ import static com.company.Deck.addCardToFull;
 import static com.company.Player.isActive;
 
 public class Table {
-    private Card trumpCard;
+    private static Card trumpCard;
     private List<Player> players;
     private Stack<Card> cards;
     private List<Round> rounds;
@@ -19,16 +19,28 @@ public class Table {
         this.cards = cards;
     }
 
+    public String[][] getStringPlayers(List<Player> lst){
+        String[][] array = new String[lst.size()][lst.size()];
+        int index = 0;
+        for (Player value : lst) {
+            array[index][0] = value.toString();
+            index++;
+        }
+        return array;
+    }
 
     public List<Player> getPlayers() {
         return players;
+    }
+    public String getPlayersSize() {
+        return String.valueOf(getPlayers().size());
     }
 
     public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
-    public Card getTrumpCard() {
+    public static Card getTrumpCard() {
         return trumpCard;
     }
 
