@@ -43,7 +43,7 @@ public class GamePanel {
 
         Box leftPanel = createLeftPanel();
         mainContainer.add(leftPanel, BorderLayout.WEST);
-        Box rightPanel = createLeftPanel();
+        Box rightPanel = createRightPanel();
         mainContainer.add(rightPanel, BorderLayout.CENTER);
     }
 

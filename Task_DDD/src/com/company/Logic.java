@@ -46,7 +46,7 @@ public class Logic {
         System.out.println((char) 27 + "[31m|||---||| Game  end |||---|||" + (char) 27 + "[0m");
     }
 
-    public static Card attackersMove(boolean isFirstBattle, Round round, Player source, Table t, Game g) {
+    public static Card attackersMove(boolean isFirstBattle, Round round, Player source, Table t, Game g, int i) {
         StringBuilder sb = new StringBuilder();
         List<Card> cards = source.getPlayersCards();
 

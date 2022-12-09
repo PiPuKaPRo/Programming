@@ -75,7 +75,7 @@ public class Round {
 
         // карта которую надо побить
 
-        Card down = Logic.attackersMove(true, round, source, t, g);
+        Card down = Logic.attackersMove(true, round, source, t, g, battleNumber);
         // карта, которой бьют
         Card up;
         while (battles.size() <= maxCountBattles) { // пока кол-во батлов не достиг макс и если атака не сказала бито
@@ -110,7 +110,7 @@ public class Round {
             // начинается новый батл
             System.out.println("-*-*-| " + (battleNumber + 1) + " battle |-*-*-");
             // атака делает новый ход
-            down = Logic.attackersMove(false, round, source, t, g);
+            down = Logic.attackersMove(false, round, source, t, g, battleNumber);
         }
 
         nextPlayer = Table.getNextPlayer(t, round, battle);
