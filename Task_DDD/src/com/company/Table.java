@@ -6,7 +6,7 @@ import static com.company.Deck.addCardToFull;
 import static com.company.Player.isActive;
 
 public class Table {
-    private static Card trumpCard;
+    private Card trumpCard;
     private List<Player> players;
     private Stack<Card> cards;
     private List<Round> rounds;
@@ -40,7 +40,7 @@ public class Table {
         this.players = players;
     }
 
-    public static Card getTrumpCard() {
+    public Card getTrumpCard() {
         return trumpCard;
     }
 

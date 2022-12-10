@@ -22,6 +22,7 @@ public class Player {
         return playersCards;
     }
 
+
     public void setPlayersCards(List<Card> playersCards) {
         this.playersCards = playersCards;
     }

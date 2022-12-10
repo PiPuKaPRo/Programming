@@ -23,6 +23,15 @@ public class Round {
         return target;
     }
 
+    public String[] getStringPlayersCards(List<Card> playersCards){
+        String[] array = new String[playersCards.size()];
+        int index = 0;
+        for (Object value : playersCards) {
+            array[index] = String.valueOf(value);
+            index++;
+        }
+        return array;
+    }
 
     public List<Battle> getBattles() {
         return battles;
