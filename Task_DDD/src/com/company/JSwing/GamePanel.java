@@ -1,8 +1,6 @@
 package com.company.JSwing;
 
 import com.company.*;
-import com.company.utils.JTableUtils;
-import com.company.utils.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,29 +36,32 @@ public class GamePanel {
         mainContainer = frame.getContentPane();
         mainContainer.setLayout(new BorderLayout());
 
-        Box leftPanel = createLeftPanel();
-        mainContainer.add(leftPanel, BorderLayout.WEST);
-        createStartMenu();
-        createGameMenu();
+        createMenu();
+        createInfMenu();
+        createGame();
 
     }
 
-    private void createStartMenu(){
+    private void createInfMenu(){
         rightPanel = new RightPanel();
         rightPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
         mainContainer.add(rightPanel, BorderLayout.EAST);
     }
 
-    private void createGameMenu(){
+    private void createGame(){
         gamePanel = new CenterPanel();
         gamePanel.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
         mainContainer.add(gamePanel, BorderLayout.CENTER);
     }
 
+    private void createMenu(){
+        Box leftPanel = createLeftPanel();
+        leftPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
+        mainContainer.add(leftPanel, BorderLayout.WEST);
+    }
+
     private Box createLeftPanel() {
         Box panel = Box.createVerticalBox();
-
-        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 3));
 
         JLabel title = new JLabel("<html>Дурак ♠ ♥ ♣ ♦</html>");
         title.setFont(new Font(null, Font.BOLD, 36));
@@ -73,15 +74,12 @@ public class GamePanel {
         panel.add(title1);
 
         JRadioButton b2 = new JRadioButton("2 Players");
-        players = 2;
         panel.add(b2);
 
         JRadioButton b3 = new JRadioButton("3 Players");
-        players = 3;
         panel.add(b3);
 
         JRadioButton b4 = new JRadioButton("4 Players");
-        players = 4;
         panel.add(b4);
 
         JButton start = new JButton("Play");
@@ -93,6 +91,9 @@ public class GamePanel {
         panel.add(startGame);
 
         start.addActionListener(e -> {
+            if (b2.isSelected()) players = 2;
+            if (b3.isSelected()) players = 3;
+            if (b4.isSelected()) players = 4;
             t = new Table();
             logic = new Logic();
             g = new Game();
@@ -115,56 +116,4 @@ public class GamePanel {
 
         return panel;
     }
-
-    class RightPanel extends Box {
-        JLabel trumpLabel = new JLabel(" ");
-        JLabel cardsCountLabel = new JLabel(" ");
-        JTable tableOfPlayers = new JTable();
-        public RightPanel() {
-            super(BoxLayout.Y_AXIS);
-            add(trumpLabel);
-            add(Box.createRigidArea(new Dimension(5, 10)));
-            add(cardsCountLabel);
-            add(Box.createRigidArea(new Dimension(5, 15)));
-            add(tableOfPlayers);
-        }
-
-        public void setTrumpCard(Card trumpCard){
-            trumpLabel.setText(String.valueOf(trumpCard));
-        }
-
-        public void setCardsCount(int cardsCount){
-          cardsCountLabel.setText(String.valueOf(cardsCount));
-        }
-
-        public void setTableOfPlayers(String[][] players){
-            JTableUtils.writeArrayToJTable(tableOfPlayers, players);
-        }
-    }
-
-    class CenterPanel extends Box{
-        JTable targetDeck = new JTable();
-        JTable cardsOnTable = new JTable();
-        JTable soursDeck = new JTable();
-        public CenterPanel() {
-            super(BoxLayout.Y_AXIS);
-            add(targetDeck);
-            add(Box.createRigidArea(new Dimension(5, 200)));
-            add(cardsOnTable);
-            add(Box.createRigidArea(new Dimension(5, 200)));
-            add(soursDeck);
-        }
-        public void setSoursDeck(String[] soursDeck1){
-            JTableUtils.writeArrayToJTable(soursDeck, soursDeck1);
-        }
-
-        public void setCardsOnTable(String[][] deck){
-            JTableUtils.writeArrayToJTable(cardsOnTable, deck);
-        }
-
-        public void setTargetDeck(String[] targetDeck1){
-            JTableUtils.writeArrayToJTable(targetDeck, targetDeck1);
-        }
-    }
-
 }

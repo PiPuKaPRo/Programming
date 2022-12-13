@@ -20,7 +20,7 @@ public class Table {
     }
 
     public String[][] getStringPlayers(List<Player> lst){
-        String[][] array = new String[lst.size()][lst.size()];
+        String[][] array = new String[lst.size()][1];
         int index = 0;
         for (Player value : lst) {
             array[index][0] = value.toString();

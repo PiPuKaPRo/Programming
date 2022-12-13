@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.JSwing.GamePanel;
+
 import java.util.*;
 
 import static com.company.Round.playingRound;
@@ -65,7 +67,7 @@ public class Logic {
             }
             while (true) {
                 if (g.getIsWindow()) {
-
+                    action = 0;
                 } else {
                     action = Console.input();
                 }
@@ -117,7 +119,7 @@ public class Logic {
         if (player.getNumber() == 1) {
             while (true) {
                 if (g.getIsWindow()) {
-
+                    numberCard = 0;
                 } else {
                     numberCard = Console.input();
                 }
