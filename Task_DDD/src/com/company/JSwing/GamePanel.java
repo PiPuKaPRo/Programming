@@ -90,6 +90,11 @@ public class GamePanel {
         JButton startGame = new JButton("Start game");
         panel.add(startGame);
 
+        panel.add(Box.createRigidArea(new Dimension(5, 300)));
+
+        JButton nextStep = new JButton("Дальше");
+        panel.add(nextStep);
+
         start.addActionListener(e -> {
             if (b2.isSelected()) players = 2;
             if (b3.isSelected()) players = 3;
@@ -110,8 +115,15 @@ public class GamePanel {
 
         startGame.addActionListener(e -> {
             logic.play(t,g);
+        });
+
+        nextStep.addActionListener(e -> {
             gamePanel.setSoursDeck(round.getStringPlayersCards(round.getSource().getPlayersCards()));
             gamePanel.setTargetDeck(round.getStringPlayersCards(round.getTarget().getPlayersCards()));
+            if(gamePanel.action.getModel().isArmed()){
+                gamePanel.setNumber(-1);
+            } else if (gamePanel.move.getModel().isArmed()) gamePanel.setNumber((Integer)
+                    gamePanel.soursDeck.getModel().getValueAt(gamePanel.soursDeck.getSelectedRow(), gamePanel.soursDeck.getSelectedColumn()));
         });
 
         return panel;

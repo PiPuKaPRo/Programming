@@ -1,5 +1,6 @@
 package com.company;
 
+import com.company.JSwing.CenterPanel;
 import com.company.JSwing.GamePanel;
 
 import java.util.*;
@@ -67,7 +68,8 @@ public class Logic {
             }
             while (true) {
                 if (g.getIsWindow()) {
-                    action = 0;
+
+                    action = CenterPanel.getNumber();
                 } else {
                     action = Console.input();
                 }
@@ -119,7 +121,7 @@ public class Logic {
         if (player.getNumber() == 1) {
             while (true) {
                 if (g.getIsWindow()) {
-                    numberCard = 0;
+                    numberCard = CenterPanel.getNumber();
                 } else {
                     numberCard = Console.input();
                 }

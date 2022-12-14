@@ -50,5 +50,4 @@ public class Console {
         }
         return playerCards.toString();
     }
-
 }

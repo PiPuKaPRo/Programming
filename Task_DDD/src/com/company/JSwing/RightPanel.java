@@ -4,6 +4,7 @@ import com.company.Card;
 import com.company.utils.JTableUtils;
 
 import javax.swing.*;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
 public class RightPanel extends Box {

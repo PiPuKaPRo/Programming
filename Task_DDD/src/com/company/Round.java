@@ -26,7 +26,7 @@ public class Round {
     public String[] getStringPlayersCards(List<Card> playersCards){
         String[] array = new String[playersCards.size()];
         int index = 0;
-        for (Object value : playersCards) {
+        for (Card value : playersCards) {
             array[index] = String.valueOf(value);
             index++;
         }

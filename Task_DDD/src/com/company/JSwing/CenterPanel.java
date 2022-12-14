@@ -6,11 +6,23 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CenterPanel extends Box {
+    public static int number;
+
+    public static int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
     JTable targetDeck = new JTable();
     JTable cardsOnTable = new JTable();
     JTable soursDeck = new JTable();
     JButton move = new JButton("Сходить");
-    JButton action = new JButton();
+    JButton action = new JButton("Бито/Взять");
+
+
     public CenterPanel() {
         super(BoxLayout.Y_AXIS);
         add(targetDeck);
@@ -23,6 +35,7 @@ public class CenterPanel extends Box {
         add(Box.createRigidArea(new Dimension(5, 7)));
         add(action);
     }
+
     public void setSoursDeck(String[] soursDeck1){
         JTableUtils.writeArrayToJTable(soursDeck, soursDeck1);
     }
@@ -35,7 +48,4 @@ public class CenterPanel extends Box {
         JTableUtils.writeArrayToJTable(targetDeck, targetDeck1);
     }
 
-    public int numberCardForMove() {
-        return 0;
-    }
 }
