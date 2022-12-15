@@ -9,6 +9,7 @@ public record Battle(Card attackCard, Card defendCard) {
         return defendCard;
     }
 
+
     public boolean isCovered() { // если карта отбита
         return defendCard != null;
     }

@@ -1,7 +1,6 @@
 package com.company;
 
 import com.company.JSwing.CenterPanel;
-import com.company.JSwing.GamePanel;
 
 import java.util.*;
 
@@ -67,19 +66,14 @@ public class Logic {
                 System.out.println("Choose card or say bito: ");
             }
             while (true) {
-                if (g.getIsWindow()) {
-
-                    action = CenterPanel.getNumber();
-                } else {
-                    action = Console.input();
-                }
+                action = Console.input();
                 if (action == -1) {
                     if (isFirstBattle) {
                         System.out.println("You cannot say bito. Choose card: ");
                     } else {
                         break;
                     }
-                } else if (round.nominalInRound(cards.get(action).getRank()) || isFirstBattle) {
+                } else if (checkAttCard(cards, action, round, isFirstBattle)) {
                     cardForMove = cards.get(action);
                     break;
                 } else {
@@ -120,26 +114,13 @@ public class Logic {
 
         if (player.getNumber() == 1) {
             while (true) {
-                if (g.getIsWindow()) {
-                    numberCard = CenterPanel.getNumber();
-                } else {
-                    numberCard = Console.input();
-                }
+                numberCard = Console.input();
 
                 if (numberCard == -1) break;
 
-                if (cards.get(numberCard).compareTo(down) > 0) {
-                    if (cards.get(numberCard).getSuit() == down.getSuit()) {
-                        cardForMove = cards.get(numberCard);
-                        break;
-                    }
-                } else System.out.println("You cannot play with this card, please choose another:");
-
-                if (down.getSuit() != t.getTrumpCard().getSuit()) {
-                    if (cards.get(numberCard).getSuit() == t.getTrumpCard().getSuit()) {
-                        cardForMove = cards.get(numberCard);
-                        break;
-                    }
+                if (checkDefCard(cards, numberCard, t, down)) {
+                    cardForMove = cards.get(numberCard);
+                    break;
                 } else System.out.println("You cannot play with this card, please choose another:");
             }
         } else {
@@ -173,4 +154,25 @@ public class Logic {
         return cardForMove;
     }
 
+    private static boolean checkDefCard(List<Card> cards, int numberCard, Table t, Card down) {
+        if (cards.get(numberCard).compareTo(down) > 0) {
+            if (cards.get(numberCard).getSuit() == down.getSuit()) {
+                return true;
+            }
+        }
+
+        if (down.getSuit() != t.getTrumpCard().getSuit()) {
+            if (cards.get(numberCard).getSuit() == t.getTrumpCard().getSuit()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkAttCard(List<Card> cards, int numberCard, Round round, boolean isFirstBattle) {
+        if (round.nominalInRound(cards.get(numberCard).getRank()) || isFirstBattle) {
+            return true;
+        }
+        return false;
+    }
 }

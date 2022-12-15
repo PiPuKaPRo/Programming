@@ -23,7 +23,7 @@ public class Round {
         return target;
     }
 
-    public String[] getStringPlayersCards(List<Card> playersCards){
+    public static String[] getStringPlayersCards(List<Card> playersCards){
         String[] array = new String[playersCards.size()];
         int index = 0;
         for (Card value : playersCards) {
@@ -132,6 +132,9 @@ public class Round {
 
         // возвращаем следующего игрока
         return nextPlayer;
+    }
+    public void addBattle(Battle battle) {
+        battles.add(battle);
     }
 }
 

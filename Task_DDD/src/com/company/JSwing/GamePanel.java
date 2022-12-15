@@ -5,17 +5,18 @@ import com.company.*;
 import javax.swing.*;
 import java.awt.*;
 
+import static com.company.Table.getNextPlayingPlayer;
+
 public class GamePanel {
     private JFrame frame;
     private Container mainContainer;
     private Table t;
-    private Logic logic;
     private Game g;
     private int players;
     private RightPanel rightPanel;
     private CenterPanel gamePanel;
-    private Round round;
-
+    private Player source;
+    private Player target;
 
     public GamePanel() {
         createFrame();
@@ -49,7 +50,7 @@ public class GamePanel {
     }
 
     private void createGame(){
-        gamePanel = new CenterPanel();
+        gamePanel = new CenterPanel(t, g);
         gamePanel.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
         mainContainer.add(gamePanel, BorderLayout.CENTER);
     }
@@ -90,17 +91,11 @@ public class GamePanel {
         JButton startGame = new JButton("Start game");
         panel.add(startGame);
 
-        panel.add(Box.createRigidArea(new Dimension(5, 300)));
-
-        JButton nextStep = new JButton("Дальше");
-        panel.add(nextStep);
-
         start.addActionListener(e -> {
             if (b2.isSelected()) players = 2;
             if (b3.isSelected()) players = 3;
             if (b4.isSelected()) players = 4;
             t = new Table();
-            logic = new Logic();
             g = new Game();
             g.setWindow(true);
             Deck dk = new Deck();
@@ -114,18 +109,16 @@ public class GamePanel {
         });
 
         startGame.addActionListener(e -> {
-            logic.play(t,g);
-        });
-
-        nextStep.addActionListener(e -> {
-            gamePanel.setSoursDeck(round.getStringPlayersCards(round.getSource().getPlayersCards()));
-            gamePanel.setTargetDeck(round.getStringPlayersCards(round.getTarget().getPlayersCards()));
-            if(gamePanel.action.getModel().isArmed()){
-                gamePanel.setNumber(-1);
-            } else if (gamePanel.move.getModel().isArmed()) gamePanel.setNumber((Integer)
-                    gamePanel.soursDeck.getModel().getValueAt(gamePanel.soursDeck.getSelectedRow(), gamePanel.soursDeck.getSelectedColumn()));
+            Player.dialCards(t);
+            source = Game.getPlayerWhoMovedFirst(t);
+            target = getNextPlayingPlayer(t, source);
+            Round firstRound = new Round(source, target);
+            gamePanel.setDownDeck(Round.getStringPlayersCards(firstRound.getSource().getPlayersCards()));
+            gamePanel.setUpDeck(Round.getStringPlayersCards(firstRound.getTarget().getPlayersCards()));
         });
 
         return panel;
     }
+
+
 }
