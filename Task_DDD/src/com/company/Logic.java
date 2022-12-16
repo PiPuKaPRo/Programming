@@ -118,7 +118,7 @@ public class Logic {
 
                 if (numberCard == -1) break;
 
-                if (checkDefCard(cards, numberCard, t, down)) {
+                if (checkDefCard(cards, numberCard, t.getTrumpCard(), down)) {
                     cardForMove = cards.get(numberCard);
                     break;
                 } else System.out.println("You cannot play with this card, please choose another:");
@@ -154,22 +154,22 @@ public class Logic {
         return cardForMove;
     }
 
-    private static boolean checkDefCard(List<Card> cards, int numberCard, Table t, Card down) {
+    public static boolean checkDefCard(List<Card> cards, int numberCard, Card trump, Card down) {
         if (cards.get(numberCard).compareTo(down) > 0) {
             if (cards.get(numberCard).getSuit() == down.getSuit()) {
                 return true;
             }
         }
 
-        if (down.getSuit() != t.getTrumpCard().getSuit()) {
-            if (cards.get(numberCard).getSuit() == t.getTrumpCard().getSuit()) {
+        if (down.getSuit() != trump.getSuit()) {
+            if (cards.get(numberCard).getSuit() == trump.getSuit()) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean checkAttCard(List<Card> cards, int numberCard, Round round, boolean isFirstBattle) {
+    public static boolean checkAttCard(List<Card> cards, int numberCard, Round round, boolean isFirstBattle) {
         if (round.nominalInRound(cards.get(numberCard).getRank()) || isFirstBattle) {
             return true;
         }

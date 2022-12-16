@@ -10,11 +10,11 @@ import static com.company.Table.getNextPlayingPlayer;
 public class GamePanel {
     private JFrame frame;
     private Container mainContainer;
-    private Table t;
+    public Table t;
     private Game g;
     private int players;
     private RightPanel rightPanel;
-    private CenterPanel gamePanel;
+    private CenterPanel centerPanel;
     private Player source;
     private Player target;
 
@@ -50,9 +50,9 @@ public class GamePanel {
     }
 
     private void createGame(){
-        gamePanel = new CenterPanel(t, g);
-        gamePanel.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
-        mainContainer.add(gamePanel, BorderLayout.CENTER);
+        centerPanel = new CenterPanel();
+        centerPanel.setBorder(BorderFactory.createLineBorder(Color.gray, 3));
+        mainContainer.add(centerPanel, BorderLayout.CENTER);
     }
 
     private void createMenu(){
@@ -106,15 +106,28 @@ public class GamePanel {
             rightPanel.setCardsCount(t.getCards().size());
             rightPanel.setFont(new Font(null, Font.BOLD, 20));
             rightPanel.setTableOfPlayers(t.getStringPlayers(t.getPlayers()));
+            centerPanel.setT(t);
+            centerPanel.setG(g);
         });
 
         startGame.addActionListener(e -> {
             Player.dialCards(t);
+            rightPanel.setCardsCount(t.getCards().size());
             source = Game.getPlayerWhoMovedFirst(t);
             target = getNextPlayingPlayer(t, source);
             Round firstRound = new Round(source, target);
-            gamePanel.setDownDeck(Round.getStringPlayersCards(firstRound.getSource().getPlayersCards()));
-            gamePanel.setUpDeck(Round.getStringPlayersCards(firstRound.getTarget().getPlayersCards()));
+            centerPanel.setRound(firstRound);
+            centerPanel.setDownDeck(Round.getStringPlayersCards(firstRound.getSource().getPlayersCards()));
+            centerPanel.setUpDeck(Round.getStringPlayersCards(firstRound.getTarget().getPlayersCards()));
+            centerPanel.inf.setText("Ходит: " + source);
+            if (centerPanel.isHuman(source)){
+                centerPanel.player.setText("Player " + target.getNumber());
+                centerPanel.player1.setText("Player " + source.getNumber());
+            } else {
+                centerPanel.player.setText("Player " + source.getNumber());
+                centerPanel.player1.setText("Player " + target.getNumber());
+            }
+
         });
 
         return panel;

@@ -11,6 +11,10 @@ public class Table {
     private Stack<Card> cards;
     private List<Round> rounds;
 
+    public List<Round> getRounds() {
+        return rounds;
+    }
+
     public Stack<Card> getCards() {
         return cards;
     }
@@ -108,7 +112,7 @@ public class Table {
 
         } else {
 
-            System.out.println(b.defendCard().toString());
+            System.out.println(b.getDefendCard().toString());
 
             r.setPickedUp(true);
 
