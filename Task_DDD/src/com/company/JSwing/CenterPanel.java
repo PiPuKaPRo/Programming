@@ -148,7 +148,7 @@ public class CenterPanel extends Box {
                         battle.setAttackCard(source.getPlayersCards().remove(cardNum));
                         battle.setDefendCard(Logic.defendersMove(t,target, round, battle.getAttackCard(), g));
                         round.addBattle(battle);
-
+                        inf.setText("Нажмите \"Следующий батл\" ");
                     } else {
                         inf.setText("Выберите другую карту!!!");
                     }
@@ -156,6 +156,7 @@ public class CenterPanel extends Box {
                     if (Logic.checkDefCard(target.getPlayersCards(), cardNum, t.getTrumpCard(), battle.getAttackCard())) {
                         battle.setDefendCard(target.getPlayersCards().remove(cardNum));
                         round.addBattle(battle);
+                        inf.setText("Нажмите \"Следующий батл\" ");
                     } else {
                         inf.setText("Выберите другую карту!!!");
                     }

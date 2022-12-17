@@ -1,10 +1,10 @@
 package com.company;
 
 public enum Mast {
-    HEARTS("H"),
-    DIAMONDS("D"),
-    CLUBS("C"),
-    SPADES("S");
+    HEARTS("♥"),
+    DIAMONDS("♦"),
+    CLUBS("♣"),
+    SPADES("♠");
 
     private final String mast;
 
