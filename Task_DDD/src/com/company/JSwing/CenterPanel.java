@@ -7,8 +7,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-import static com.company.Table.getNextPlayingPlayer;
-
 public class CenterPanel extends Box {
     private Round round;
     private Player source;
@@ -24,6 +22,7 @@ public class CenterPanel extends Box {
         this.round = round;
         this.source = round.getSource();
         this.target = round.getTarget();
+        this.battle = new Battle();
     }
 
     public void setT(Table t) {
@@ -39,8 +38,7 @@ public class CenterPanel extends Box {
     JTable downDeck = new JTable();
     JButton move = new JButton("Сходить");
     JButton action = new JButton("Бито/Беру");
-    JButton nextRound = new JButton("Следующий раунд");
-    JButton nextBattle = new JButton("Следующий батл");
+    JButton nextBattle = new JButton("Далее");
     JLabel inf = new JLabel(" ");
     JLabel player = new JLabel(" ");
     JLabel player1 = new JLabel(" ");
@@ -61,79 +59,38 @@ public class CenterPanel extends Box {
         add(move);
         add(Box.createRigidArea(new Dimension(5, 7)));
         add(action);
-        add(Box.createRigidArea(new Dimension(5, 10)));
-        add(nextRound);
         add(Box.createRigidArea(new Dimension(5, 7)));
         add(nextBattle);
 
-        nextRound.addActionListener(e -> {
-            if (round != null) {
-                target = Table.getNextPlayingPlayer(t, round.getSource());
-                t.addRound(round);
-            }
-            if (Game.isGameActive(t)) {
-                round = new Round(source, target);
-                if (isHuman(target)) {
-                    setDownDeck(Round.getStringPlayersCards(target.getPlayersCards()));
-                    setUpDeck(Round.getStringPlayersCards(source.getPlayersCards()));
-                    player.setText("Player " + source.getNumber());
-                    player1.setText("Player " + target.getNumber());
-                } else {
-                    setDownDeck(Round.getStringPlayersCards(source.getPlayersCards()));
-                    setUpDeck(Round.getStringPlayersCards(target.getPlayersCards()));
-                    player.setText("Player " + target.getNumber());
-                    player1.setText("Player " + source.getNumber());
-                }
-
-                inf.setText("Раунд: " + (i + 1));
-                if (source == null) {
-                    inf.setText("Ничья");
-                    return;
-                }
-                source = getNextPlayingPlayer(t, source);
-                if (target == null) {
-                    inf.setText("Игра окончена, проиграл игрок - " + source.getNumber());
+        nextBattle.addActionListener(e -> {
+            battle = new Battle();
+            int maxCountBattles = (t.getRounds().size() == 0) ? 5 : 6;
+            // если можно сделать батл
+            if (round.getBattles().size() <= maxCountBattles) {
+                // если нападает бот - он ходит сразу
+                inf.setText("Ходит: " + source);
+                if (isBot(source)) {
+                    botAttackersMove();
+                    if (isBot(target)) { // если защита тоже бот, то ходит сразу
+                        botDefendersMove();
+                        inf.setText("Нажмите \"Далее\" ");
+                    }
+                    inf.setText("Ходит: " + target);
                 }
             }
-            i++;
-            rightPanel.setCardsCount(t.getCards().size());
             repaintC();
         });
 
         action.addActionListener(e -> {
-            if (isHuman(round.getTarget())) {
-                inf.setText("Беру, нажмите следующий раунд");
+            if (!isBot(target)) {
+                inf.setText(target + " взял, нажмите следующий раунд");
                 round.addBattle(battle);
-                return;
+                battle = new Battle();
+                endRound(true);
             }
-            if (isHuman(round.getSource())) {
+            if (!isBot(source)) {
                 inf.setText("Бито, нажмите следующий раунд");
-                round.addBattle(battle);
-                return;
-            }
-            repaintC();
-        });
-
-        nextBattle.addActionListener(e -> {
-            battle = new Battle();
-            boolean isFirstRound = t.getRounds().size() == 0;
-            int maxCountBattles = isFirstRound ? 5 : 6;
-
-            if (round.getBattles().size() <= maxCountBattles) {
-                inf.setText("Ходит: " + source);
-                if (!isHuman(source)) {
-                    Card attackCard = Logic.attackersMove(true, round, source, t, g, round.getBattles().size());
-                    if (attackCard == null){
-                        battle.setDefendCard(round.getBattles().get(round.getBattles().size() - 1).getDefendCard());
-                        inf.setText("Бито, нажмите \"Следующий раунд\" ");
-                    } else {
-                        battle.setAttackCard(attackCard);
-                    }
-                    if (!isHuman(target)) {
-                        battle.setDefendCard(Logic.defendersMove(t, target, round, battle.getAttackCard(), g));
-                    }
-                    inf.setText("Нажмите \"Следующий батл\" ");
-                }
+                endRound(false);
             }
             repaintC();
         });
@@ -142,21 +99,20 @@ public class CenterPanel extends Box {
             // выбрал ли игрок карту
             cardNum = downDeck.getSelectedColumn();
             if (cardNum != -1) {
-                if (isHuman(source)) {
-                    boolean isFirstBattle = round.getBattles().size() == 0;
-                    if (Logic.checkAttCard(source.getPlayersCards(), cardNum, round, isFirstBattle)) {
+                if (!isBot(source)) {
+                    if (Logic.checkAttCard(source.getPlayersCards(), cardNum, round, round.getBattles().size() == 0)) {
                         battle.setAttackCard(source.getPlayersCards().remove(cardNum));
-                        battle.setDefendCard(Logic.defendersMove(t,target, round, battle.getAttackCard(), g));
+                        inf.setText("Батл окончен. Нажмите \"Далее\" ");
                         round.addBattle(battle);
-                        inf.setText("Нажмите \"Следующий батл\" ");
+                        botDefendersMove();
                     } else {
                         inf.setText("Выберите другую карту!!!");
                     }
-                } else if (isHuman(target)) {
+                } else if (!isBot(target)) {
                     if (Logic.checkDefCard(target.getPlayersCards(), cardNum, t.getTrumpCard(), battle.getAttackCard())) {
                         battle.setDefendCard(target.getPlayersCards().remove(cardNum));
                         round.addBattle(battle);
-                        inf.setText("Нажмите \"Следующий батл\" ");
+                        inf.setText("Нажмите \"Далее\" ");
                     } else {
                         inf.setText("Выберите другую карту!!!");
                     }
@@ -184,12 +140,12 @@ public class CenterPanel extends Box {
         JTableUtils.writeArrayToJTable(upDeck, targetDeck1);
     }
 
-    public static boolean isHuman(Player player) {
-        return player.getNumber() == 1;
+    public static boolean isBot(Player player) {
+        return player.getNumber() != 1;
     }
 
     private void repaintC() {
-        if (isHuman(target)) {
+        if (!isBot(target)) {
             setDownDeck(Round.getStringPlayersCards(target.getPlayersCards()));
             setUpDeck(Round.getStringPlayersCards(source.getPlayersCards()));
         } else {
@@ -199,20 +155,97 @@ public class CenterPanel extends Box {
         setCardsOnTable(getStringCardsOnTable(round.getBattles(), battle));
     }
 
-    public static String[][] getStringCardsOnTable(List<Battle> battles, Battle currentBattle) {
+    public String[][] getStringCardsOnTable(List<Battle> battles, Battle currentBattle) {
         String[][] array = new String[2][battles.size() + 1];
         for (int i = 0; i < battles.size(); i++) {
-           array[0][i] = currentBattle.getDefendCard().toString();
-           array[1][i] = currentBattle.getAttackCard().toString();
+            if (isBot(target)){
+                array[0][i] = currentBattle.getDefendCard().toString();
+                array[1][i] = currentBattle.getAttackCard().toString();
+            }
+            else {
+                array[1][i] = currentBattle.getDefendCard().toString();
+                array[0][i] = currentBattle.getAttackCard().toString();
+            }
         }
-        if (currentBattle.getDefendCard() != null){
-            array[0][battles.size()] = currentBattle.getDefendCard().toString();
+        if (currentBattle.getDefendCard() != null) {
+            if (isBot(target)){
+                array[0][battles.size()] = currentBattle.getDefendCard().toString();
+            } else {
+                array[1][battles.size()] = currentBattle.getDefendCard().toString();
+            }
         }
-        if (currentBattle.getAttackCard() != null){
-            array[1][battles.size()] = currentBattle.getAttackCard().toString();
-        }
+        if (currentBattle.getAttackCard() != null) {
+            if (isBot(source)){
+                array[0][battles.size()] = currentBattle.getAttackCard().toString();
+            } else {
+                array[1][battles.size()] = currentBattle.getAttackCard().toString();
+            }
 
-
+        }
         return array;
+    }
+
+    private void searchLoserInGame() {
+        Player p = Table.getLastPlayer(t);
+        if (p == null) {
+            inf.setText("Игра окончена, ничья!");
+        } else {
+            inf.setText("Игра окончена, проиграл - " + p);
+        }
+    }
+
+    private void botAttackersMove() {
+        Card attackCard = Logic.attackersMove(true, round, source, t, g, round.getBattles().size());
+        if (attackCard == null) {
+            inf.setText("Бито, нажмите \"Следующий раунд\" ");
+        } else {
+            battle.setAttackCard(attackCard);
+        }
+    }
+
+    private void botDefendersMove() {
+        battle.setDefendCard(Logic.defendersMove(t, target, round, battle.getAttackCard(), g));
+        if (battle.getDefendCard() == null) {
+            endRound(true);
+            inf.setText("Игрок " + target + " берёт, раунд окончен. Нажмите \"Следующий Раунд\" ");
+        }
+    }
+
+    /**
+     * закончить текущий раунд, сохранить его, и создать новый раунд
+     *
+     * @param isTargetTakes
+     */
+    private void endRound(boolean isTargetTakes) {
+        t.addRound(round);
+        // если защита взяла карты, то
+        if (isTargetTakes) {
+            Round.addRoundCardsToPlayer(t, round);
+            Deck.addCardToFull(t, source);
+            source = Table.getNextPlayingPlayer(t, target);
+            target = Table.getNextPlayingPlayer(t, source);
+        } else {
+            Deck.addCardToFull(t, source);
+            Deck.addCardToFull(t, target);
+            Player prevSource = source;
+            source = target;
+            if (Player.isActive(t, source)){
+                target = Table.getNextPlayingPlayer(t, source);
+                if (target == null) {
+                    inf.setText("Игра окончена, проиграл " + source);
+                }else {
+                   round = new Round(source, target);
+                   battle = new Battle();
+                }
+            } else {
+                source = Table.getNextPlayingPlayer(t, source);
+                if (source == null){
+                    inf.setText("Игра окончена, ничья!");
+                } else if (source == prevSource){
+                    inf.setText("Игра окончена, проиграл " + source);
+                }
+            }
+        }
+        rightPanel.setCardsCount(t.getCards().size());
     }
 }

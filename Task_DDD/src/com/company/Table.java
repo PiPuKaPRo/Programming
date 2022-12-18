@@ -60,7 +60,7 @@ public class Table {
         rounds = new ArrayList<>();
     }
 
-    public static Player getNextPlayingPlayer(Table t, Player playerSource) { // возвращает следующего по очереди игрока, который ещё в игре
+    public static Player getNextPlayingPlayer(Table t, Player playerSource) { // возвращает следующего по очереди игрока, который идет после сурса
         int playerSourceNumber = Integer.valueOf(playerSource.getNumber());
         List<Player> players = t.getPlayers();
         Player nextPlayer;
@@ -98,10 +98,8 @@ public class Table {
         if (!b.isCovered()) {
             System.out.println(r.getTarget().toString() + " takes");
             r.setPickedUp(false);
-            List<Card> cardsInRound = Round.getCardsInRound(r);
-            for (Card card : cardsInRound) {
-                Deck.addCardToPlayer(t, r.getTarget(), card);
-            }
+
+            Round.addRoundCardsToPlayer(t, r);
 
             addCardToFull(t, r.getSource());
 

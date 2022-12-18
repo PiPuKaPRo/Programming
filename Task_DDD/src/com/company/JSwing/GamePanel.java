@@ -117,15 +117,17 @@ public class GamePanel {
             target = getNextPlayingPlayer(t, source);
             Round firstRound = new Round(source, target);
             centerPanel.setRound(firstRound);
-            centerPanel.setDownDeck(Round.getStringPlayersCards(firstRound.getSource().getPlayersCards()));
-            centerPanel.setUpDeck(Round.getStringPlayersCards(firstRound.getTarget().getPlayersCards()));
             centerPanel.inf.setText("Ходит: " + source);
-            if (centerPanel.isHuman(source)){
-                centerPanel.player.setText("Player " + target.getNumber());
-                centerPanel.player1.setText("Player " + source.getNumber());
-            } else {
+            if (!centerPanel.isBot(target)){
                 centerPanel.player.setText("Player " + source.getNumber());
                 centerPanel.player1.setText("Player " + target.getNumber());
+                centerPanel.setDownDeck(Round.getStringPlayersCards(target.getPlayersCards()));
+                centerPanel.setUpDeck(Round.getStringPlayersCards(source.getPlayersCards()));
+            } else {
+                centerPanel.player.setText("Player " + target.getNumber());
+                centerPanel.player1.setText("Player " + source.getNumber());
+                centerPanel.setDownDeck(Round.getStringPlayersCards(source.getPlayersCards()));
+                centerPanel.setUpDeck(Round.getStringPlayersCards(target.getPlayersCards()));
             }
 
         });

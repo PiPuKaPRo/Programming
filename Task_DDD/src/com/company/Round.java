@@ -136,5 +136,12 @@ public class Round {
     public void addBattle(Battle battle) {
         battles.add(battle);
     }
+
+    public static void addRoundCardsToPlayer(Table t, Round r){
+        List<Card> cardsInRound = Round.getCardsInRound(r);
+        for (Card card : cardsInRound) {
+            Deck.addCardToPlayer(t, r.getTarget(), card);
+        }
+    }
 }
 
