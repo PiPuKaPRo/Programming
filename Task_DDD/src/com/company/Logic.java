@@ -15,7 +15,7 @@ public class Logic {
         System.out.println(Console.playerCardsToString(t));
         System.out.println(t.getCards().size());
 
-        Player source = Game.getPlayerWhoMovedFirst(t);  // кто ходит первым
+        Player source = g.getPlayerWhoMovedFirst(t);  // кто ходит первым
         System.out.print("---1 Round---\nPlaying " + source.toString());
         Player target = getNextPlayingPlayer(t, source);  // кто отбивает
         System.out.println(" and " + target.toString());

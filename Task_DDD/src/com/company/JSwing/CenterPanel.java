@@ -18,11 +18,12 @@ public class CenterPanel extends Box {
     private Game g;
     private RightPanel rightPanel;
 
-    public void setRound(Round round) {
+    public void setRound(Round round, RightPanel rightPanel) {
         this.round = round;
         this.source = round.getSource();
         this.target = round.getTarget();
         this.battle = new Battle();
+        this.rightPanel = rightPanel;
     }
 
     public void setT(Table t) {
@@ -71,7 +72,7 @@ public class CenterPanel extends Box {
                 inf.setText("Ходит: " + source);
                 if (isBot(source)) {
                     botAttackersMove();
-                    if (isBot(target)) { // если защита тоже бот, то ходит сразу
+                    if (battle.getAttackCard() != null && isBot(target)){// если защита тоже бот, то ходит сразу
                         botDefendersMove();
                         inf.setText("Нажмите \"Далее\" ");
                     }
@@ -83,13 +84,12 @@ public class CenterPanel extends Box {
 
         action.addActionListener(e -> {
             if (!isBot(target)) {
-                inf.setText(target + " взял, нажмите следующий раунд");
+                inf.setText(target + " взял, нажмите \"Далее\"");
                 round.addBattle(battle);
                 battle = new Battle();
                 endRound(true);
-            }
-            if (!isBot(source)) {
-                inf.setText("Бито, нажмите следующий раунд");
+            } else if (!isBot(source)) {
+                inf.setText("Бито, нажмите \"Далее\" ");
                 endRound(false);
             }
             repaintC();
@@ -158,24 +158,35 @@ public class CenterPanel extends Box {
     public String[][] getStringCardsOnTable(List<Battle> battles, Battle currentBattle) {
         String[][] array = new String[2][battles.size() + 1];
         for (int i = 0; i < battles.size(); i++) {
-            if (isBot(target)){
-                array[0][i] = currentBattle.getDefendCard().toString();
-                array[1][i] = currentBattle.getAttackCard().toString();
-            }
-            else {
-                array[1][i] = currentBattle.getDefendCard().toString();
-                array[0][i] = currentBattle.getAttackCard().toString();
+            if (isBot(target)) {
+                if (battles.get(i).getAttackCard() != null) {
+                    array[1][i] = battles.get(i).getAttackCard().toString();
+                } else {
+                    inf.setText("Бито, нажмите \"Далее\" ");
+                }
+                if (battles.get(i).getDefendCard() != null) {
+                    array[0][i] = battles.get(i).getDefendCard().toString();
+                }
+            } else {
+                if (battles.get(i).getAttackCard() != null) {
+                    array[0][i] = battles.get(i).getAttackCard().toString();
+                } else {
+                    inf.setText("Бито, нажмите \"Далее\" ");
+                }
+                if (battles.get(i).getDefendCard() != null) {
+                    array[1][i] = battles.get(i).getDefendCard().toString();
+                }
             }
         }
         if (currentBattle.getDefendCard() != null) {
-            if (isBot(target)){
+            if (isBot(target)) {
                 array[0][battles.size()] = currentBattle.getDefendCard().toString();
             } else {
                 array[1][battles.size()] = currentBattle.getDefendCard().toString();
             }
         }
         if (currentBattle.getAttackCard() != null) {
-            if (isBot(source)){
+            if (isBot(source)) {
                 array[0][battles.size()] = currentBattle.getAttackCard().toString();
             } else {
                 array[1][battles.size()] = currentBattle.getAttackCard().toString();
@@ -185,19 +196,12 @@ public class CenterPanel extends Box {
         return array;
     }
 
-    private void searchLoserInGame() {
-        Player p = Table.getLastPlayer(t);
-        if (p == null) {
-            inf.setText("Игра окончена, ничья!");
-        } else {
-            inf.setText("Игра окончена, проиграл - " + p);
-        }
-    }
 
     private void botAttackersMove() {
         Card attackCard = Logic.attackersMove(true, round, source, t, g, round.getBattles().size());
         if (attackCard == null) {
-            inf.setText("Бито, нажмите \"Следующий раунд\" ");
+            inf.setText("Бито, нажмите \"Далее\" ");
+            endRound(false);
         } else {
             battle.setAttackCard(attackCard);
         }
@@ -206,8 +210,8 @@ public class CenterPanel extends Box {
     private void botDefendersMove() {
         battle.setDefendCard(Logic.defendersMove(t, target, round, battle.getAttackCard(), g));
         if (battle.getDefendCard() == null) {
+            inf.setText("Игрок " + target + " берёт, раунд окончен. Нажмите \"Далее\" ");
             endRound(true);
-            inf.setText("Игрок " + target + " берёт, раунд окончен. Нажмите \"Следующий Раунд\" ");
         }
     }
 
@@ -224,28 +228,30 @@ public class CenterPanel extends Box {
             Deck.addCardToFull(t, source);
             source = Table.getNextPlayingPlayer(t, target);
             target = Table.getNextPlayingPlayer(t, source);
+            round = new Round(source, target);
         } else {
             Deck.addCardToFull(t, source);
             Deck.addCardToFull(t, target);
             Player prevSource = source;
             source = target;
-            if (Player.isActive(t, source)){
+            if (Player.isActive(t, source)) {
                 target = Table.getNextPlayingPlayer(t, source);
                 if (target == null) {
                     inf.setText("Игра окончена, проиграл " + source);
-                }else {
-                   round = new Round(source, target);
-                   battle = new Battle();
+                } else {
+                    round = new Round(source, target);
+                    battle = new Battle();
                 }
             } else {
                 source = Table.getNextPlayingPlayer(t, source);
-                if (source == null){
+                if (source == null) {
                     inf.setText("Игра окончена, ничья!");
-                } else if (source == prevSource){
+                } else if (source == prevSource) {
                     inf.setText("Игра окончена, проиграл " + source);
                 }
             }
         }
         rightPanel.setCardsCount(t.getCards().size());
     }
+
 }

@@ -54,7 +54,9 @@ public class Round {
 
     public boolean nominalInRound(CardsNumberAndPower rank) {  //проверяем наличие номинала rank в раунде
         for (CardsNumberAndPower r: allRanksInRound) {         //цикл по всем сохранённым номиналам
-            if (r.equals(rank)) return true;             //если rank совпадает с r, то такой номинал есть
+            if (r.equals(rank)){
+                return true;             //если rank совпадает с r, то такой номинал есть
+            }
         }
         return false;
     }
@@ -135,12 +137,20 @@ public class Round {
     }
     public void addBattle(Battle battle) {
         battles.add(battle);
+        addCardToNominal(battle.getAttackCard());
+        addCardToNominal(battle.getDefendCard());
     }
 
     public static void addRoundCardsToPlayer(Table t, Round r){
         List<Card> cardsInRound = Round.getCardsInRound(r);
         for (Card card : cardsInRound) {
             Deck.addCardToPlayer(t, r.getTarget(), card);
+        }
+    }
+
+    private void addCardToNominal(Card card){
+        if (card != null && !allRanksInRound.contains(card.getRank())){
+            allRanksInRound.add(card.getRank());
         }
     }
 }

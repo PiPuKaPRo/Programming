@@ -116,7 +116,7 @@ public class GamePanel {
             source = Game.getPlayerWhoMovedFirst(t);
             target = getNextPlayingPlayer(t, source);
             Round firstRound = new Round(source, target);
-            centerPanel.setRound(firstRound);
+            centerPanel.setRound(firstRound, rightPanel);
             centerPanel.inf.setText("Ходит: " + source);
             if (!centerPanel.isBot(target)){
                 centerPanel.player.setText("Player " + source.getNumber());
