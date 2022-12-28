@@ -20,8 +20,8 @@ public class RightPanel extends Box {
         add(tableOfPlayers);
     }
 
-    public void setTrumpCard(Card trumpCard){
-        trumpLabel.setText(String.valueOf(trumpCard));
+    public void setTrumpCard(String  trumpCard){
+        trumpLabel.setText(trumpCard);
     }
 
     public void setCardsCount(int cardsCount){

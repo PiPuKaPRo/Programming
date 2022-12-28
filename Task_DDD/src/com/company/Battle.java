@@ -20,12 +20,12 @@ public class Battle {
         this.defendCard = defendCard;
     }
 
-    public Card getAttackCard() {
-        return attackCard;
-    }
-
     public Card getDefendCard() {
         return defendCard;
+    }
+
+    public Card getAttackCard() {
+        return attackCard;
     }
 
 

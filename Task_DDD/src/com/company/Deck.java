@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class Deck {
-    public void addCardsInGame(Table g) {
+    public void addCardsInGame(Table t) {
         ArrayList<Card> allCards = new ArrayList<>();
         Stack<Card> cards = new Stack<>();
         for (CardsNumberAndPower rank : CardsNumberAndPower.values()) {
@@ -16,12 +16,12 @@ public class Deck {
             }
         }
         Card trump = allCards.remove(35);
-        g.setTrumpCard(trump);
+        t.setTrumpCard(trump);
         cards.push(trump);
         for (Card card : allCards) {
             cards.push(card);
         }
-        g.setCards(cards);
+        t.setCards(cards);
     } // в класс колоды
 
     public static boolean isDeckEmpty(Table t) {
@@ -74,6 +74,4 @@ public class Deck {
         }
         cards.add(i, card);
     }
-
-
 }

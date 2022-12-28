@@ -4,22 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private boolean isWindow;
 
-    public void setWindow(boolean window) {
-        isWindow = window;
-    }
-
-    public boolean getIsWindow() {
-        return isWindow;
-    }
-
-    public void addPlayersInGame(Table g, int playersCount) {
+    public void addPlayersInGame(Table t, int playersCount) {
         List<Player> players = new ArrayList<>();
         for (int i = 1; i <= playersCount; i++) {
             players.add(new Player(i));
         }
-        g.setPlayers(players);
+        t.setPlayers(players);
     }
 
     public static Player getPlayerWhoMovedFirst(Table t) { // кто ходит первым

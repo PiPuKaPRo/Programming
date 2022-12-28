@@ -13,8 +13,11 @@ public class Player {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Player");
-        sb.append(number);
+        if (number == 1){
+            sb.append("Игрок снизу (Вы)");
+        } else
+            sb.append("Игрок сверху (Бот Валера)");
+
         return sb.toString();
     }
 

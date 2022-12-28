@@ -1,22 +1,25 @@
 package com.company.JSwing;
 
 import com.company.*;
+import com.company.client_server.Client;
+import com.company.client_server.Server;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static com.company.Table.getNextPlayingPlayer;
-
 public class GamePanel {
     private JFrame frame;
     private Container mainContainer;
-    public Table t;
-    private Game g;
-    private int players;
     private RightPanel rightPanel;
     private CenterPanel centerPanel;
-    private Player source;
-    private Player target;
+
+    boolean isServerVersion;
+    GUILogic guiLogic = new GUILogic();
+    String[] upCards;
+    String[] downCards;
+    String info;
+    int countInDeck;
+    String[][] battleCards = new String[2][6];
 
     public GamePanel() {
         createFrame();
@@ -70,70 +73,52 @@ public class GamePanel {
 
         panel.add(Box.createRigidArea(new Dimension(5, 15)));
 
-        JLabel title1 = new JLabel("<html>Выберите количество игроков: </html>");
-        title1.setFont(new Font(null, Font.BOLD, 16));
-        panel.add(title1);
-
-        JRadioButton b2 = new JRadioButton("2 Players");
-        panel.add(b2);
-
-        JRadioButton b3 = new JRadioButton("3 Players");
-        panel.add(b3);
-
-        JRadioButton b4 = new JRadioButton("4 Players");
-        panel.add(b4);
-
-        JButton start = new JButton("Play");
-        panel.add(start);
-
+        JRadioButton gameType = new JRadioButton("Play on server");
+        panel.add(gameType);
         panel.add(Box.createRigidArea(new Dimension(5, 7)));
 
-        JButton startGame = new JButton("Start game");
-        panel.add(startGame);
+        JButton start = new JButton("Start game");
+        panel.add(start);
 
         start.addActionListener(e -> {
-            if (b2.isSelected()) players = 2;
-            if (b3.isSelected()) players = 3;
-            if (b4.isSelected()) players = 4;
-            t = new Table();
-            g = new Game();
-            g.setWindow(true);
-            Deck dk = new Deck();
-            dk.addCardsInGame(t);
-            g.addPlayersInGame(t, players);
-            rightPanel.setTrumpCard(t.getTrumpCard());
-            rightPanel.setFont(new Font(null, Font.BOLD, 20));
-            rightPanel.setCardsCount(t.getCards().size());
-            rightPanel.setFont(new Font(null, Font.BOLD, 20));
-            rightPanel.setTableOfPlayers(t.getStringPlayers(t.getPlayers()));
-            centerPanel.setT(t);
-            centerPanel.setG(g);
-        });
-
-        startGame.addActionListener(e -> {
-            Player.dialCards(t);
-            rightPanel.setCardsCount(t.getCards().size());
-            source = Game.getPlayerWhoMovedFirst(t);
-            target = getNextPlayingPlayer(t, source);
-            Round firstRound = new Round(source, target);
-            centerPanel.setRound(firstRound, rightPanel);
-            centerPanel.inf.setText("Ходит: " + source);
-            if (!centerPanel.isBot(target)){
-                centerPanel.player.setText("Player " + source.getNumber());
-                centerPanel.player1.setText("Player " + target.getNumber());
-                centerPanel.setDownDeck(Round.getStringPlayersCards(target.getPlayersCards()));
-                centerPanel.setUpDeck(Round.getStringPlayersCards(source.getPlayersCards()));
+            if (gameType.isSelected()) {
+                isServerVersion = true;
+//                Server.start(8080);
+//                Server.runServerApp(8080);
+                String response = Client.start();
+                parseResponse(response);
             } else {
-                centerPanel.player.setText("Player " + target.getNumber());
-                centerPanel.player1.setText("Player " + source.getNumber());
-                centerPanel.setDownDeck(Round.getStringPlayersCards(source.getPlayersCards()));
-                centerPanel.setUpDeck(Round.getStringPlayersCards(target.getPlayersCards()));
+                isServerVersion = false;
+                guiLogic.initializeGame();
+                rightPanel.setTrumpCard(guiLogic.getTrumpCard());
+                centerPanel.setRightPanel(rightPanel);
+                centerPanel.setGUILogic(guiLogic);
+                countInDeck = guiLogic.start();
+                upCards = guiLogic.getUpCards();
+                downCards = guiLogic.getDownCards();
+                info = guiLogic.getInfo();
             }
 
+            centerPanel.setUpDeck(upCards);
+            centerPanel.setDownDeck(downCards);
+            rightPanel.setCardsCount(countInDeck);
+            centerPanel.info.setText(info);
+
+            centerPanel.setIsServerVersion(isServerVersion);
         });
 
         return panel;
     }
 
+    public void parseResponse(String response) {
+        String[] str = response.split("_");
 
+        upCards = str[0].split(" ");
+        downCards = str[1].split(" ");
+        info = str[2];
+        countInDeck = Integer.parseInt(str[3]);
+
+        battleCards[0] = str[4].split(" ");
+        battleCards[1] = str[5].split(" ");
+    }
 }
